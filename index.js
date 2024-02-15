@@ -12,7 +12,11 @@ const bodyParser = require("body-parser");
 const fileUpload = require("express-fileupload");
 // const dotenv = require('dotenv');
 const path = require("path");
-app.use(cors());
+app.use(
+  cors({
+    origin: "*",
+  })
+);
 
 
 app.use(express.json());
