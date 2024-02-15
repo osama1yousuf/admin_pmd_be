@@ -2,16 +2,6 @@ const blog = require("../models/blog");
 const cloudinary = require('cloudinary')
 exports.newBlog = async (req, res) => {
   try {
-    console.log(req.body)
-    if (req.body?.categoryIdList !== undefined) {
-      try {
-        req.body.categoryIdList = JSON.parse(req.body.categoryIdList);
-      } catch (error) {
-        console.log('Error parsing JSON:', error);
-      }
-    } else {
-      req.body.categoryIdList = [];
-    }
     let imageLink;
   if (req.body.image) {
       const blogImage = await cloudinary.v2.uploader.upload(req.body.image , {
@@ -21,9 +11,8 @@ exports.newBlog = async (req, res) => {
         public_id: blogImage.public_id,
         url: blogImage.secure_url,
       };
+      req.body.image = imageLink
   }
-  req.body.image = imageLink
-  console.log(req.body)
   const blogCreate = await blog.create(req.body)
  res.status(200).json({
     success : true ,
@@ -123,7 +112,7 @@ exports.editBlog = async (req, res) => {
   try {
     let {Id} = req.params
     let blogFind = await blog.findById(Id);
-    
+    console.log(req.body);
     if (!blogFind){
         res.status(404).json({
             success : false,
@@ -132,15 +121,15 @@ exports.editBlog = async (req, res) => {
         return
     }
     // console.log("req.body?.categoryIdList" , req.body?.categoryIdList  === "undefined")
-    if (req.body?.categoryIdList !== undefined && req.body?.categoryIdList !== "undefined") {
-      try {
-        req.body.categoryIdList = JSON.parse(req.body.categoryIdList);
-      } catch (error) {
-        console.log('Error parsing JSON:', error);
-      }
-    } else {
-      req.body.categoryIdList = [];
-    }
+    // if (req.body?.categoryIdList !== undefined && req.body?.categoryIdList !== "undefined") {
+    //   try {
+    //     req.body.categoryIdList = JSON.parse(req.body.categoryIdList);
+    //   } catch (error) {
+    //     console.log('Error parsing JSON:', error);
+    //   }
+    // } else {
+    //   req.body.categoryIdList = [];
+    // }
     let imageLink;
     if (req.body.image) {
         const blogImage = await cloudinary.v2.uploader.upload(req.body.image , {
@@ -150,8 +139,9 @@ exports.editBlog = async (req, res) => {
           public_id: blogImage.public_id,
           url: blogImage.secure_url,
         };
+        req.body.image = imageLink
     }
-    req.body.image = imageLink
+    console.log(req.body)
     product = await blog.findByIdAndUpdate(Id, req.body, {
       new: true,
       runValidators: true,

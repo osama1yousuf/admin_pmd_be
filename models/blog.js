@@ -13,10 +13,10 @@ const blogSchema = new mongoose.Schema({
     type: "string",
     required : false
   },
-  categoryIdList : {
-    type : Array,
-    required : false
-  },
+  // categoryIdList : {
+  //   type : Array,
+  //   required : false
+  // },
   slug: {
     type: "string",
     required : false

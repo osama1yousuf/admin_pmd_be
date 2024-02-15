@@ -6,22 +6,26 @@ const categorySchema = new mongoose.Schema({
     required: true,
   },
   
-  level :{
-    type : Number ,
-    required : true,
-  },
-  parentId : {
-    type : String,
-    require : true,
-  },
+  // level :{
+  //   type : Number ,
+  //   required : true,
+  // },
+  // parentId : {
+  //   type : String,
+  //   require : true,
+  // },
   url : {
    type : String ,
    require : true
   },
-  keys : {
-    type: Array,
-    default: [],
+  status :{
+    type : Number,
+    default : 1,
   }
+  // keys : {
+  //   type: Array,
+  //   default: [],
+  // }
 });
 
 module.exports = mongoose.model("category", categorySchema);

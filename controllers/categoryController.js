@@ -7,27 +7,48 @@ const cloudinary = require("cloudinary");
 // Create new genere   =>   /api/v1/admin/category/new
 exports.newCategory = async (req, res) => {
   try {
-    req.body.keys = JSON.parse(req.body.keys)
-    const category = await Category.create(req.body);
-    let keysList = [...category.keys , category._id] 
-    const updateCategory = await Category.updateOne({_id : category._id} , {$set : {keys : keysList}})
-  res.status(200).json({
-    success: true,
-    updateCategory,
-  });
+    const {name , url} = req.body
+    if(!name || !url) {
+      return res.status(400).json({
+        success: false,
+        message: "Please provide name and url"
+      })
+    }
+    console.log(req.body)
+      const category  = await Category.create(req.body)
+      return res.status(200).json({
+        success: true,
+        category
+      })
+    
   } catch (error) {
     res.status(500).json({
       success: false,
-      message :"server error"
-    });
-    console.log(error) 
+      message: "server error"
+    })
   }
+  // try {
+  //   req.body.keys = JSON.parse(req.body.keys)
+  //   const category = await Category.create(req.body);
+  //   let keysList = [...category.keys , category._id] 
+  //   const updateCategory = await Category.updateOne({_id : category._id} , {$set : {keys : keysList}})
+  // res.status(200).json({
+  //   success: true,
+  //   updateCategory,
+  // });
+  // } catch (error) {
+  //   res.status(500).json({
+  //     success: false,
+  //     message :"server error"
+  //   });
+  //   console.log(error) 
+  // }
   
 };
 
 // Get all genres   =>   /api/v1/genres
 exports.getCategory = catchAsyncErrors(async (req, res) => {
-  const category = await Category.find();
+  const category = await Category.find({status : 1});
 
   res.status(200).json({
     success: true,
@@ -36,20 +57,34 @@ exports.getCategory = catchAsyncErrors(async (req, res) => {
 });
 
 // Delete Category   =>   /api/v1/admin/category/:id
-exports.deleteCategory = catchAsyncErrors(async (req, res, next) => {
-  const category = await Category.findById(req.params.genreID);
-
-  if (!category) {
-    return next(new ErrorHandler("Product not found", 404));
+exports.deleteCategory = async (req, res, next) => {
+  try {
+    let {id} = req.params;
+    console.log(id)
+    const category = await Category.findById(id);
+    console.log(category)
+    if (!category) {
+      return res.status(404).json({
+        success: false,
+        message: "Category not found"
+      });
+    }
+   
+   category.status = 0;
+   await category.save();
+  
+    res.status(200).json({
+      success: true,
+      message: "Category delete successfully",
+    });
+    
+  } catch (error) {
+    res.status(500).json({ 
+      success : false,
+      message  :'server error'
+    })
   }
-
-  await category.remove();
-
-  res.status(200).json({
-    success: true,
-    message: "Product is deleted.",
-  });
-});
+};
 
 
 exports.getCategoryByLevel = async (req, res, next) => {
@@ -65,17 +100,14 @@ exports.getCategoryByLevel = async (req, res, next) => {
 exports.updateCategory = async (req, res) =>{
   try {
     let {Id} = req.params
-    let {name} = req.body
+    let {name , url} = req.body
     const updatedCategory = await Category.findOneAndUpdate(
       { _id: Id },
-      { $set: { name: name } },
-      { useFindAndModify: false, new: false } 
+      { $set: { name: name  , url : url} },
+      { useFindAndModify: false, new: true } 
     );
-    if (updatedCategory) {
-      console.log('Document updated successfully:', updatedCategory);
-    } else {
-      console.log('No document found with the specified ID.');
-    }
+
+    
     res.status(200).json({
       success : true , 
       updatedCategory

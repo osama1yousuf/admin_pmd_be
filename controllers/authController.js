@@ -32,20 +32,20 @@ exports.registerUser = catchAsyncErrors(async (req, res, next) => {
 exports.loginUser = async (req, res, next) => {
   try {
     const { email, password } = req.body;
-    // Checks if email and password is entered by user
-    if (!email || !password) {
-      return next(new ErrorHandler("Please enter email & password", 400));
-    }
 
+    if (!email || !password) {
+      return res.status(401).json({
+        success: false,
+        message: "Please enter email & password",
+      });
+    }
     // Finding user in database
     const user = await User.findOne({ email }).select("+password");
-
     if (!user) {
-      res.status(401).json({
+      return res.status(401).json({
         success: false,
         message: "Invalid Email or Password",
       });
-      return;
     }
 
     // Checks if password is correct or not
@@ -54,7 +54,7 @@ exports.loginUser = async (req, res, next) => {
     if (!isPasswordMatched) {
       res.status(401).json({
         success: false,
-        message: "Invalid Email or Password",
+        message: "Invalid Password",
       });
       return;
     }
@@ -67,7 +67,6 @@ exports.loginUser = async (req, res, next) => {
       user,
     });
   } catch (error) {
-    console.log("error", error);
     res.status(500).json({
       success: false,
       message: "Server Error",
@@ -75,46 +74,49 @@ exports.loginUser = async (req, res, next) => {
   }
 };
 
-// Forgot Password   =>  /api/v1/password/forgot
-exports.forgotPassword = catchAsyncErrors(async (req, res, next) => {
-  const user = await User.findOne({ email: req.body.email });
-
-  if (!user) {
-    return next(new ErrorHandler("User not found with this email", 404));
-  }
-
-  // Get reset token
-  const resetToken = user.getResetPasswordToken();
-
-  await user.save({ validateBeforeSave: false });
-
-  // Create reset password url
-  const resetUrl = `${req.protocol}://${req.get(
-    "host"
-  )}/password/reset/${resetToken}`;
-
-  const message = `Your password reset token is as follow:\n\n${resetUrl}\n\nIf you have not requested this email, then ignore it.`;
-
+// Forgot Password   =>  /api/v1/password/update
+exports.forgotPassword = async (req, res) => {
   try {
-    await sendEmail({
-      email: user.email,
-      subject: "ShopIT Password Recovery",
-      message,
-    });
+    const {oldPassword, password , email} = req.body
+    console.log(req.body)
+    if(!oldPassword || !password){
+      return res.status(401).json({
+        success: false,
+        message: "Please enter old password & new password"
+      })
+    }
+    let user = await User.findOne({email: email}).select("+password");
+    console.log("user" , user)
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: "User not found with this email",
+      });
+    }
+    const isPasswordMatched = await user.comparePassword(oldPassword)
+    console.log("isPasswordMatched" , isPasswordMatched)
+    if (!isPasswordMatched) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid old password",
+      });
 
-    res.status(200).json({
+    }
+     user.password = password;
+     await user.save();
+     return res.status(200).json({
       success: true,
-      message: `Email sent to: ${user.email}`,
-    });
+      message: "Password changed successfully",
+     })
   } catch (error) {
-    user.resetPasswordToken = undefined;
-    user.resetPasswordExpire = undefined;
-
-    await user.save({ validateBeforeSave: false });
-
-    return next(new ErrorHandler(error.message, 500));
+    console.log(error.message)
+    res.status(500).json({
+      success: false,
+      message: "Server Error",
+    })
   }
-});
+ 
+};
 
 // Reset Password   =>  /api/v1/password/reset/:token
 exports.resetPassword = catchAsyncErrors(async (req, res, next) => {

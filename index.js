@@ -29,8 +29,7 @@ cloudinary.config({
     api_key: process.env.CLOUDINARY_API_KEY,
     api_secret: process.env.CLOUDINARY_API_SECRET
 })
-
-
+   
 // Import all routes
 const products = require("./routes/product");
 const auth = require("./routes/auth");
@@ -46,9 +45,10 @@ app.use("/api/v1", order);
 app.use("/api/v1", category);
 app.use("/api/v1", blog);
 
-app.get('/', function (req, res) {
+app.get('*', function (req, res) {
   res.send('Hello World!');
 });
+
 app.listen(process.env.PORT, function () {
     console.log(`Server started on PORT: ${process.env.PORT} in ${process.env.NODE_ENV} mode.`)
 });
