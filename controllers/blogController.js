@@ -1,24 +1,41 @@
 const blog = require("../models/blog");
-const cloudinary = require('cloudinary')
+const cloudinary = require("cloudinary");
 exports.newBlog = async (req, res) => {
   try {
-    let imageLink;
-  if (req.body.image) {
-      const blogImage = await cloudinary.v2.uploader.upload(req.body.image , {
-       folder : 'blog'
-      })
-       imageLink = {
+    let imageLinkBanner;
+    if (req.body.bannerImage) {
+      const blogImage = await cloudinary.v2.uploader.upload(
+        req.body.bannerImage,
+        {
+          folder: "blog",
+        }
+      );
+      imageLinkBanner = {
         public_id: blogImage.public_id,
         url: blogImage.secure_url,
       };
-      req.body.image = imageLink
-  }
-  const blogCreate = await blog.create(req.body)
- res.status(200).json({
-    success : true ,
-    blogCreate
- }) 
+      req.body.bannerImage = imageLinkBanner;
+    }
 
+    let imageLinkInner;
+    if (req.body.innerImage) {
+      const blogImage = await cloudinary.v2.uploader.upload(
+        req.body.innerImage,
+        {
+          folder: "blog",
+        }
+      );
+      imageLinkInner = {
+        public_id: blogImage.public_id,
+        url: blogImage.secure_url,
+      };
+      req.body.innerImage = imageLinkInner;
+    }
+    const blogCreate = await blog.create(req.body);
+    res.status(200).json({
+      success: true,
+      blogCreate,
+    });
   } catch (error) {
     console.log(error);
     res.status(500).json({
@@ -30,11 +47,11 @@ exports.newBlog = async (req, res) => {
 
 exports.getBlog = async (req, res) => {
   try {
-    let blogs = await blog.find({status : 1}).populate('user')
+    let blogs = await blog.find({ status: 1 }).populate("user");
     res.status(200).json({
-        success : true ,
-        data : blogs
-    })
+      success: true,
+      data: blogs,
+    });
   } catch (error) {
     console.log(error);
     res.status(200).json({
@@ -44,62 +61,64 @@ exports.getBlog = async (req, res) => {
   }
 };
 exports.getBlogById = async (req, res) => {
-    try {
-        const {id} = req.params
-      let blogs = await blog.findById({_id : id }).populate('user')
-      res.status(200).json({
-          success : true ,
-          data : blogs
-      })
-    } catch (error) {
-      console.log(error);
-      res.status(200).json({
-        success: false,
-        message: "server error",
-      });
-    }
+  try {
+    const { id } = req.params;
+    let blogs = await blog.findById({ _id: id }).populate("user");
+    res.status(200).json({
+      success: true,
+      data: blogs,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(200).json({
+      success: false,
+      message: "server error",
+    });
+  }
 };
 exports.getBlogByslug = async (req, res) => {
-    try {
-      const {slug} = req.params
-      let blogs = await blog.find({slug : slug }).populate('user')
-      res.status(200).json({
-          success : true ,
-          data : blogs
-      })
-    } catch (error) {
-      console.log(error);
-      res.status(200).json({
-        success: false,
-        message: "server error",
-      });
-    }
+  try {
+    const { slug } = req.params;
+    let blogs = await blog.find({ slug: slug }).populate("user");
+    res.status(200).json({
+      success: true,
+      data: blogs,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(200).json({
+      success: false,
+      message: "server error",
+    });
+  }
 };
 exports.getBlogByCategory = async (req, res) => {
-    try {
-      const {id} = req.params
-      let blogs = await blog.find({ categoryIdList : {$in : [id]} }).populate('user')
-      res.status(200).json({
-          success : true ,
-          data : blogs
-      })
-    } catch (error) {
-      console.log(error);
-      res.status(200).json({
-        success: false,
-        message: "server error",
-      });
-    }
+  try {
+    const { id } = req.params;
+    let blogs = await blog
+      .find({ categoryIdList: { $in: [id] } })
+      .populate("user");
+    res.status(200).json({
+      success: true,
+      data: blogs,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(200).json({
+      success: false,
+      message: "server error",
+    });
+  }
 };
-  
+
 exports.deleteBlog = async (req, res) => {
   try {
-    let {Id} = req.params
-    let softDelete = await blog.updateOne({_id : Id} , {$set : { status  : 0}})
+    let { Id } = req.params;
+    let softDelete = await blog.updateOne({ _id: Id }, { $set: { status: 0 } });
     res.status(200).json({
-        success : true,
-        message : 'Blog Deleted Successfully'
-    })
+      success: true,
+      message: "Blog Deleted Successfully",
+    });
   } catch (error) {
     console.log(error);
     res.status(500).json({
@@ -110,15 +129,15 @@ exports.deleteBlog = async (req, res) => {
 };
 exports.editBlog = async (req, res) => {
   try {
-    let {Id} = req.params
+    let { Id } = req.params;
     let blogFind = await blog.findById(Id);
     console.log(req.body);
-    if (!blogFind){
-        res.status(404).json({
-            success : false,
-            message :  "Blog not found"
-        })
-        return
+    if (!blogFind) {
+      res.status(404).json({
+        success: false,
+        message: "Blog not found",
+      });
+      return;
     }
     // console.log("req.body?.categoryIdList" , req.body?.categoryIdList  === "undefined")
     // if (req.body?.categoryIdList !== undefined && req.body?.categoryIdList !== "undefined") {
@@ -130,24 +149,42 @@ exports.editBlog = async (req, res) => {
     // } else {
     //   req.body.categoryIdList = [];
     // }
-    let imageLink;
-    if (req.body.image) {
-        const blogImage = await cloudinary.v2.uploader.upload(req.body.image , {
-         folder : 'blog'
-        })
-         imageLink = {
-          public_id: blogImage.public_id,
-          url: blogImage.secure_url,
-        };
-        req.body.image = imageLink
+    let imageLinkBanner;
+    if (req.body.bannerImage) {
+      const blogImage = await cloudinary.v2.uploader.upload(
+        req.body.bannerImage,
+        {
+          folder: "blog",
+        }
+      );
+      imageLinkBanner = {
+        public_id: blogImage.public_id,
+        url: blogImage.secure_url,
+      };
+      req.body.bannerImage = imageLinkBanner;
     }
-    console.log(req.body)
+
+    let imageLinkInner;
+    if (req.body.innerImage) {
+      const blogImage = await cloudinary.v2.uploader.upload(
+        req.body.innerImage,
+        {
+          folder: "blog",
+        }
+      );
+      imageLinkInner = {
+        public_id: blogImage.public_id,
+        url: blogImage.secure_url,
+      };
+      req.body.innerImage = imageLinkInner;
+    }
+
     product = await blog.findByIdAndUpdate(Id, req.body, {
       new: true,
       runValidators: true,
       useFindAndModify: false,
     });
-  
+
     res.status(200).json({
       success: true,
       product,
@@ -160,4 +197,3 @@ exports.editBlog = async (req, res) => {
     });
   }
 };
-

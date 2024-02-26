@@ -7,11 +7,11 @@ const blogSchema = new mongoose.Schema({
   },
   category: {
     type: String,
-    required : false
+    required: false,
   },
   metaTittle: {
     type: "string",
-    required : false
+    required: false,
   },
   // categoryIdList : {
   //   type : Array,
@@ -19,16 +19,26 @@ const blogSchema = new mongoose.Schema({
   // },
   slug: {
     type: "string",
-    required : false
+    required: false,
   },
   metaDescription: {
     type: "string",
-    required : false
+    required: false,
   },
-  image: {
+  bannerImage: {
     public_id: {
       type: String,
       // required: true,s
+    },
+    url: {
+      type: String,
+      // required: true,
+    },
+  },
+  innerImage: {
+    public_id: {
+      type: String,
+      // required: true,
     },
     url: {
       type: String,
@@ -49,8 +59,8 @@ const blogSchema = new mongoose.Schema({
     ref: "User",
   },
   status: {
-    type : Number ,
-    default : 1
+    type: Number,
+    default: 1,
   },
 });
 
