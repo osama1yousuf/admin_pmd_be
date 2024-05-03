@@ -113,8 +113,8 @@ exports.getBlogByCategory = async (req, res) => {
 
 exports.deleteBlog = async (req, res) => {
   try {
-    let { Id } = req.params;
-    let softDelete = await blog.updateOne({ _id: Id }, { $set: { status: 0 } });
+    let { id } = req.params;
+    let softDelete = await blog.updateOne({ _id: id }, { $set: { status: 0 } });
     res.status(200).json({
       success: true,
       message: "Blog Deleted Successfully",
@@ -129,8 +129,8 @@ exports.deleteBlog = async (req, res) => {
 };
 exports.editBlog = async (req, res) => {
   try {
-    let { Id } = req.params;
-    let blogFind = await blog.findById(Id);
+    let { id } = req.params;
+    let blogFind = await blog.findById(id);
     console.log(req.body);
     if (!blogFind) {
       res.status(404).json({
@@ -179,7 +179,7 @@ exports.editBlog = async (req, res) => {
       req.body.innerImage = imageLinkInner;
     }
 
-    product = await blog.findByIdAndUpdate(Id, req.body, {
+    product = await blog.findByIdAndUpdate(id, req.body, {
       new: true,
       runValidators: true,
       useFindAndModify: false,
