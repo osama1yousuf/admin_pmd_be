@@ -1,11 +1,11 @@
-var express = require('express');
+var express = require("express");
 var app = express();
-const connectDatabase = require('./config/database')
-require('dotenv').config();
+const connectDatabase = require("./config/database");
+require("dotenv").config();
 
-const cloudinary = require('cloudinary')
+const cloudinary = require("cloudinary");
 // Handle Uncaught exceptions
-const cors = require('cors');
+const cors = require("cors");
 
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
@@ -19,8 +19,8 @@ app.use(
 );
 // app.use(cors());
 
-app.use(express.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json({limit: '50mb'}));
+app.use(bodyParser.urlencoded({ extended: true, limit: "50mb" }));
 app.use(cookieParser());
 app.use(fileUpload());
 
@@ -29,11 +29,11 @@ connectDatabase();
 
 // Setting up cloudinary configuration
 cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET
-})
-   
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
 // Import all routes
 const products = require("./routes/product");
 const auth = require("./routes/auth");
@@ -49,10 +49,12 @@ app.use("/api/v1", order);
 app.use("/api/v1", category);
 app.use("/api/v1", blog);
 
-app.get('*', function (req, res) {
-  res.send('Hello World!');
+app.get("*", function (req, res) {
+  res.send("Hello World!");
 });
 
 app.listen(process.env.PORT, function () {
-    console.log(`Server started on PORT: ${process.env.PORT} in ${process.env.NODE_ENV} mode.`)
+  console.log(
+    `Server started on PORT: ${process.env.PORT} in ${process.env.NODE_ENV} mode.`
+  );
 });
