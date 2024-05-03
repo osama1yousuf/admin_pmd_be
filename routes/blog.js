@@ -20,6 +20,6 @@ router.get('/getBlog/:id', getBlogById);
 router.get('/getBlogBySlug/:slug', getBlogByslug);
 router.get('/getBlogByCategory/:id', getBlogByCategory);
 router.delete('/blog/:id', isAuthenticatedUser, deleteBlog);
-router.post('/editblog/:id', isAuthenticatedUser, editBlog);
+router.post('/editblog/:id', editBlog);
 
 module.exports = router;
