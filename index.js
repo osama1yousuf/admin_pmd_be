@@ -15,7 +15,7 @@ const path = require("path");
 app.use(
   cors({
     origin: "*",
-    methods: "GET, PUT, POST, DELETE, HEAD", // Set the allowed methods
+    methods: "GET,PUT,POST,DELETE", // Set the allowed methods
   })
 );
 
