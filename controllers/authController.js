@@ -10,20 +10,21 @@ const cloudinary = require("cloudinary");
 
 // Register a user   => /api/v1/register
 exports.registerUser = catchAsyncErrors(async (req, res, next) => {
-  const result = await cloudinary.v2.uploader.upload(req.body.avatar, {
-    folder: "avatars",
-    width: 150,
-    crop: "scale",
-  });
+  // const result = await cloudinary.v2.uploader.upload(req.body.avatar, {
+  //   folder: "avatars",
+  //   width: 150,
+  //   crop: "scale",
+  // });
+  console.log(req.body);
   const { name, email, password } = req.body;
   const user = await User.create({
     name,
     email,
     password,
-    avatar: {
-      public_id: result.public_id,
-      url: result.secure_url,
-    },
+    // avatar: {
+    //   public_id: result.public_id,
+    //   url: result.secure_url,
+    // },
   });
   sendToken(user, 200, res);
 });
@@ -77,45 +78,43 @@ exports.loginUser = async (req, res, next) => {
 // Forgot Password   =>  /api/v1/password/update
 exports.forgotPassword = async (req, res) => {
   try {
-    const {oldPassword, password , email} = req.body
-    console.log(req.body)
-    if(!oldPassword || !password){
+    const { oldPassword, password, email } = req.body;
+    console.log(req.body);
+    if (!oldPassword || !password) {
       return res.status(401).json({
         success: false,
-        message: "Please enter old password & new password"
-      })
+        message: "Please enter old password & new password",
+      });
     }
-    let user = await User.findOne({email: email}).select("+password");
-    console.log("user" , user)
+    let user = await User.findOne({ email: email }).select("+password");
+    console.log("user", user);
     if (!user) {
       return res.status(401).json({
         success: false,
         message: "User not found with this email",
       });
     }
-    const isPasswordMatched = await user.comparePassword(oldPassword)
-    console.log("isPasswordMatched" , isPasswordMatched)
+    const isPasswordMatched = await user.comparePassword(oldPassword);
+    console.log("isPasswordMatched", isPasswordMatched);
     if (!isPasswordMatched) {
       return res.status(401).json({
         success: false,
         message: "Invalid old password",
       });
-
     }
-     user.password = password;
-     await user.save();
-     return res.status(200).json({
+    user.password = password;
+    await user.save();
+    return res.status(200).json({
       success: true,
       message: "Password changed successfully",
-     })
+    });
   } catch (error) {
-    console.log(error.message)
+    console.log(error.message);
     res.status(500).json({
       success: false,
       message: "Server Error",
-    })
+    });
   }
- 
 };
 
 // Reset Password   =>  /api/v1/password/reset/:token
@@ -183,15 +182,14 @@ exports.updatePassword = async (req, res, next) => {
     user.password = req.body.password;
     await user.save();
 
-     let tokenResponse = sendToken(user, 200, res);
-     console.log("tokenResponse" , tokenResponse)
-     res.status(200).json({
-        success : true,
-        token : tokenResponse?.token
-     })
-
+    let tokenResponse = sendToken(user, 200, res);
+    console.log("tokenResponse", tokenResponse);
+    res.status(200).json({
+      success: true,
+      token: tokenResponse?.token,
+    });
   } catch (error) {
-    console.log("error" , error)
+    console.log("error", error);
     res.status(500).json({
       success: false,
       message: "server error",

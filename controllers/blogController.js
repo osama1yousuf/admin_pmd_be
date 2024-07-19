@@ -2,35 +2,36 @@ const blog = require("../models/blog");
 const cloudinary = require("cloudinary");
 exports.newBlog = async (req, res) => {
   try {
-    let imageLinkBanner;
-    if (req.body.bannerImage) {
-      const blogImage = await cloudinary.v2.uploader.upload(
-        req.body.bannerImage,
-        {
-          folder: "blog",
-        }
-      );
-      imageLinkBanner = {
-        public_id: blogImage.public_id,
-        url: blogImage.secure_url,
-      };
-      req.body.bannerImage = imageLinkBanner;
-    }
+    console.log("req.body", req.body);
+    // let imageLinkBanner;
+    // if (req.body.bannerImage) {
+    //   const blogImage = await cloudinary.v2.uploader.upload(
+    //     req.body.bannerImage,
+    //     {
+    //       folder: "blog",
+    //     }
+    //   );
+    //   imageLinkBanner = {
+    //     public_id: blogImage.public_id,
+    //     url: blogImage.secure_url,
+    //   };
+    //   req.body.bannerImage = imageLinkBanner;
+    // }
 
-    let imageLinkInner;
-    if (req.body.innerImage) {
-      const blogImage = await cloudinary.v2.uploader.upload(
-        req.body.innerImage,
-        {
-          folder: "blog",
-        }
-      );
-      imageLinkInner = {
-        public_id: blogImage.public_id,
-        url: blogImage.secure_url,
-      };
-      req.body.innerImage = imageLinkInner;
-    }
+    // let imageLinkInner;
+    // if (req.body.innerImage) {
+    //   const blogImage = await cloudinary.v2.uploader.upload(
+    //     req.body.innerImage,
+    //     {
+    //       folder: "blog",
+    //     }
+    //   );
+    //   imageLinkInner = {
+    //     public_id: blogImage.public_id,
+    //     url: blogImage.secure_url,
+    //   };
+    //   req.body.innerImage = imageLinkInner;
+    // }
     const blogCreate = await blog.create(req.body);
     res.status(200).json({
       success: true,
@@ -149,37 +150,37 @@ exports.editBlog = async (req, res) => {
     // } else {
     //   req.body.categoryIdList = [];
     // }
-    let imageLinkBanner;
-    if (req.body.bannerImage) {
-      const blogImage = await cloudinary.v2.uploader.upload(
-        req.body.bannerImage,
-        {
-          folder: "blog",
-        }
-      );
-      imageLinkBanner = {
-        public_id: blogImage.public_id,
-        url: blogImage.secure_url,
-      };
-      req.body.bannerImage = imageLinkBanner;
-    }
+    // let imageLinkBanner;
+    // if (req.body.bannerImage) {
+    //   const blogImage = await cloudinary.v2.uploader.upload(
+    //     req.body.bannerImage,
+    //     {
+    //       folder: "blog",
+    //     }
+    //   );
+    //   imageLinkBanner = {
+    //     public_id: blogImage.public_id,
+    //     url: blogImage.secure_url,
+    //   };
+    //   req.body.bannerImage = imageLinkBanner;
+    // }
 
-    let imageLinkInner;
-    if (req.body.innerImage) {
-      const blogImage = await cloudinary.v2.uploader.upload(
-        req.body.innerImage,
-        {
-          folder: "blog",
-        }
-      );
-      imageLinkInner = {
-        public_id: blogImage.public_id,
-        url: blogImage.secure_url,
-      };
-      req.body.innerImage = imageLinkInner;
-    }
+    // let imageLinkInner;
+    // if (req.body.innerImage) {
+    //   const blogImage = await cloudinary.v2.uploader.upload(
+    //     req.body.innerImage,
+    //     {
+    //       folder: "blog",
+    //     }
+    //   );
+    //   imageLinkInner = {
+    //     public_id: blogImage.public_id,
+    //     url: blogImage.secure_url,
+    //   };
+    //   req.body.innerImage = imageLinkInner;
+    // }
 
-    product = await blog.findByIdAndUpdate(id, req.body, {
+    blogUpdate = await blog.findByIdAndUpdate(id, req.body, {
       new: true,
       runValidators: true,
       useFindAndModify: false,
@@ -187,7 +188,7 @@ exports.editBlog = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      product,
+      blogUpdate,
     });
   } catch (error) {
     console.log(error);
