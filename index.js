@@ -12,12 +12,14 @@ const bodyParser = require("body-parser");
 const fileUpload = require("express-fileupload");
 // const dotenv = require('dotenv');
 const path = require("path");
-app.use(
-  cors({
-    origin: "*",
-    methods: "GET,PUT,POST,DELETE", // Set the allowed methods
-  })
-);
+// app.use(
+//   cors({
+//     origin: "*",
+//     methods: "GET,PUT,POST,DELETE", // Set the allowed methods
+//   })
+// );
+
+app.use(cors());
 
 
 app.use(express.json({ limit: "50mb" }));
