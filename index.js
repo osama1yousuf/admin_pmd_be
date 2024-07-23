@@ -18,9 +18,13 @@ const path = require("path");
 //     methods: "GET,PUT,POST,DELETE", // Set the allowed methods
 //   })
 // );
+const corsOptions = {
+  origin: "http://localhost:3030",
+  credentials: false, //access-control-allow-credentials:true
+  optionSuccessStatus: 410,
+};
 
-app.use(cors());
-
+app.use(cors(corsOptions));
 
 app.use(express.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ extended: true, limit: "50mb" }));

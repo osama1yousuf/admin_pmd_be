@@ -19,8 +19,8 @@ const {
 const { isAuthenticatedUser, authorizeRoles } = require("../middlewares/auth");
 const allowCors = require("../middlewares/allowCors");
 
-router.route("/register").post(allowCors, registerUser);
-router.route("/login").post(allowCors, loginUser);
+router.route("/register").post( registerUser);
+router.route("/login").post( loginUser);
 
 router.route("/password/update").post(forgotPassword);
 router.route("/password/reset/:token").put(resetPassword);
