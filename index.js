@@ -14,7 +14,7 @@ const fileUpload = require("express-fileupload");
 const path = require("path");
 app.use(
   cors({
-    origin: "http://localhost:3030", // Replace with your frontend port
+    origin: "https://umee-admin-panel.vercel.app", // Replace with your frontend port
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization", "token"],
   })
