@@ -13,7 +13,7 @@ const fileUpload = require("express-fileupload");
 // const dotenv = require('dotenv');
 const path = require("path");
 const corsOptions = {
-  origin: "http://localhost:3030", // Allow only this origin
+  origin: "*", // Allow only this origin
   methods: "GET,POST,PUT,DELETE", // Allow only these methods
   allowedHeaders: "Content-Type,Authorization", // Allow only these headers
 };
