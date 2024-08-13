@@ -14,11 +14,13 @@ const fileUpload = require("express-fileupload");
 const path = require("path");
 app.use(
   cors({
-    origin: "https://umee-admin-panel.vercel.app", // Replace with your frontend port
+    // origin: "https://umee-admin-panel.vercel.app",
+    origin: "http://localhost:3030/",
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization", "token"],
   })
 );
+
 
 app.use(express.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ extended: true, limit: "50mb" }));
