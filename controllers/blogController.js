@@ -48,7 +48,12 @@ exports.newBlog = async (req, res) => {
 
 exports.getBlog = async (req, res) => {
   try {
-    let blogs = await blog.find({ status: 1 }).populate("user");
+    let blogs = await blog
+      .find(
+        { status: 1 },
+        "bannerImage innerImage name user category metaTittle slug metaDescription"
+      )
+      .populate("user");
     res.status(200).json({
       success: true,
       data: blogs,
